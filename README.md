@@ -13,7 +13,7 @@ Some defaults are already added for conveninence.
 All that's needed is to uncomment the ones you want to use.  
 *All of the values are taken from [vaper.ninja's](https://tools.vaper.ninja/) website.*  
 <br clear="right"/>
-- Added weight value defaults:
+- Added weight value defaults (uncomment the ones you'd like to use):
 ```bash
 ## Default
 vg="1.249"
