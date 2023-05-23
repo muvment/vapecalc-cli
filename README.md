@@ -137,3 +137,5 @@ r    -> Remove a saved recipe
 
 h    -> Print this help message
 ```
+## Donate
+XMR: 83DP8YWimcZBsGkgdegsvRdARa94LoYXeeBjFbbdrQNzMcBw9N7kpyZbydL9iGA9Sc8G1dx42A1bHPvQsmTo5UVj7buwVEm
