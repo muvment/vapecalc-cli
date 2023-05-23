@@ -6,7 +6,7 @@
 Script inspired by others seen online, but namely by [EjuiceCalculator](https://github.com/lwturkjr/EjuiceCalculator) and [vaper.ninja's](https://tools.vaper.ninja/) online calculator.
 And as me and python do not work well together, I decided to make my own bash script, seeing also that nobody had yet made a proper calculator with support for weight for linux.  
 ## Installation
-Simply clone or donwload the script to the directory of your choice and make it executable.
+Simply clone or download the script to the directory of your choice and make it executable.
 ## Configuration
 There are certain values that can be changed, such as default VG and PG weight values, display colors, temporary directory and saved recipes directory.  
 Some defaults are already added for conveninence.  
