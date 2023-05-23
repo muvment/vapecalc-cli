@@ -1,0 +1,336 @@
+#!/bin/bash
+
+# Script inspired by many, but namely "https://github.com/lwturkjr/EjuiceCalculator"
+# And as me and python do not work well together, I decided to make my own bash
+# script, also seeing nobody had made a proper calculator by weight for linux.
+
+# INFO FOR HELP MESSAGE
+lc="https://mit-license.org/"
+gh="https://github.com/muvment/vape-calc-cli"
+xmr="83DP8YWimcZBsGkgdegsvRdARa94LoYXeeBjFbbdrQNzMcBw9N7kpyZbydL9iGA9Sc8G1dx42A1bHPvQsmTo5UVj7buwVEm"
+
+# VG & PG BASE WEIGHT VALUES (taken from https://tools.vaper.ninja/)
+# Uncomment the ones you'd like to use
+
+## Default
+vg="1.249"
+pg="1.0361"
+
+## Amazon Essentials
+#vg="1.2881"
+#pg="1.07887"
+
+## botboy41 (https://www.reddit.com/r/DIY_eJuice/comments/2iq3km/botboy141_guide_to_mixing_by_weight/)
+#vg="1.26"
+#pg="1.038"
+
+## v-ecigs.com (http://www.v-ecigs.com/tfa-flavor-percentage-recommendations/)
+#vg="1.261"
+#pg="1.036"
+
+# TEMPORARY FILES TO WRITE TO AND READ FROM
+tmp="/tmp/vapecalc"
+tmp2="/tmp/vapecalc_flavours"
+
+# RECIPES DIRECTORY
+recipe="$HOME/Documents/Recipes/vape_recipes.txt"
+
+# COLORS (https://linuxhandbook.com/change-echo-output-color/)
+## Black
+b="\033[00;30m"
+
+## Dark gray
+lb="\033[01;30m"
+
+## Light Gray
+ly="\033[00;37m"
+
+## Red
+r="\033[00;31m"
+
+## Light Red
+lr="\033[01;31m"
+
+## Green
+g="\033[00;32m"
+
+## Light Green
+lg="\033[01;32m"
+
+## Brown/Orange
+o="\033[00;33m"
+
+## Yellow
+lo="\033[01;33m"
+
+## Blue
+u="\033[00;34m"
+
+## Light blue
+lu="\033[01;34m"
+
+## Purple
+p="\033[00;35m"
+
+## Light Purple
+lp="\033[01;35m"
+
+## Cyan
+c="\033[00;36m"
+
+## Light Cyan
+lc="\033[01;36m"
+
+## White
+w="\033[01;37m"
+
+## End
+e="\033[0m"
+
+## FIXED COLOR OPTIONS
+
+## Sed beginning
+so="\x1b[1;36m"
+
+## Sed end
+se="\x1b[0m"
+
+## License start
+ls="\e[4;32m\e]8;;"
+
+## Author start
+as="\e[4;35m\e]8;;"
+
+## Link end
+le="\e]8;;\a\033[0m"
+
+## TITLE
+title="
+${r}#################################${e}
+    ${lr}** E-Juice Calculator **${e}
+${r}#################################${e}
+"
+## INFO MESSAGE
+info="
+${r}#################################${e}
+    ${lr}** E-Juice Calculator **${e}
+  ${lg}Calculate by volume & weight${e}
+         ${ls}$lc\aMIT license ${le}
+  ${as}$gh\aCopyright (c) 2023 muvment ${le}
+         ${as}$xmr\aDonate XMR ${le}
+${r}#################################${e}
+"
+
+function load_recipe () {
+# Print title
+clear
+
+echo -e "$title"
+
+# Select recipe
+read_recipe=$(cat $recipe)
+
+select_recipe=$(echo "$read_recipe" | grep -Po "#.*[ ^].*?" | sed 's/#//' | fzf)
+
+selected_recipe=$(echo "$select_recipe" | sed 's/.$//')
+
+# Found in (https://overflow.adminforge.de/questions/17908555/printing-with-sed-or-awk-a-line-following-a-matching-pattern)
+print_recipe=$(echo "$read_recipe" | sed -n "/$selected_recipe {/,/g}/{/$selected_recipe/!{//d;p;}}" \
+    | sed 's/#.*{//;s/\}//' \
+    | sed "s,.*\:,${so}&${se},g;s, ml,${so}&${se},g;s, g,${so}&${se},g;s, %,${so}&${se},g")
+
+# Print recipe
+clear
+
+echo -e "$title"
+
+echo -e "${lc}$selected_recipe${e}\n$print_recipe"
+
+exit 1
+}
+
+function calculator () {
+# Print title
+clear
+echo -e "$title"
+
+# Total volume of liquid to make
+read -p "$(echo -e "${lc}Mix total (ml):${e}") " batch_total
+
+# Base liquid VG
+read -p "$(echo -e "${lc}Base VG ratio (%):${e}") " base_vg
+
+# Base liquid PG
+base_pg=$(awk "BEGIN{print(100 - $base_vg)}")
+
+# Nic. base strength
+read -p "$(echo -e "${lc}Base nicotine strength (mg/ml):${e}") " nic_base
+
+# Desired nic. strength
+read -p "$(echo -e "${lc}Target nicotine strength (mg/ml):${e}") " nic_level
+
+# Nic. base VG
+read -p "$(echo -e "${lc}Nicotine VG ratio (%):${e}") " nic_base_vg
+
+# Nic. base PG
+nic_base_pg=$(awk "BEGIN{print(100 - $nic_base_vg)}")
+
+# Number of flavours to use
+read -p "$(echo -e "${lc}Number of flavours:${e}") " flav_no
+
+# Create array with flavour names and values and store to a temp file from which to red from later
+n=0
+while [[ $n -lt $flav_no ]]; do
+
+    # flavour names
+    read -p "$(echo -e "${lc}Enter flavouring name:${e}") " flav_name
+
+    name=$(echo "$flav_name" | sed 's/ /_/g')
+
+    # Flavour percent to mix, and save value(s) to temp file to sum up for total percentage value
+    read -p "$(echo -e "${lc}\"$flav_name\" percentage (%):${e}") " flav_percent
+
+    # Calculate flavour weight
+    flav_volume=$(awk "BEGIN{print((${flav_percent[@]}/100) * $batch_total)}")
+    flav_weight=$(awk "BEGIN{print(((${flav_percent[@]}/100) * $batch_total) * $pg)}")
+
+    # Save values to tmp file
+    echo "${flav_percent[@]}" >> $tmp2;
+    echo "${name[@]}: ${flav_volume[@]} ml ${flav_weight[@]} g" >> $tmp;
+    n=$((n+1));
+done
+
+# Flavour total
+get_flavours=$(cat $tmp | sed 's/.*\://' | awk '{print $1}' | tr -s '\n' '+' | sed 's/.$//;s/+/ + /')
+flav_total=$(awk "BEGIN{print($get_flavours)}")
+
+# Flavour total percentage
+get_percentage=$(cat "$tmp2" | tr -s '\n' '+' | sed 's/.$//;s/+/ + /')
+flav_total_percentage=$(awk "BEGIN{print($get_percentage)}")
+
+# Calculate base total volume
+base_total=$(awk "BEGIN{print($batch_total - ($nic_total + $flav_total))}")
+
+# Calculate base VG weight
+batch_vg=$(awk "BEGIN{print(($base_vg/100) * $base_total)}")
+
+# Calculate base PG weight
+batch_pg=$(awk "BEGIN{print(($base_pg/100) * $base_total)}")
+
+# Calculate base total weight
+base_total_weight=$(awk "BEGIN{print($batch_total - ($nic_total + $flav_total))}")
+
+# Calculate nic. total volume
+nic_total=$(awk "BEGIN{print(($nic_level/$nic_base) * $batch_total)}")
+
+# Calculate nic. VG weight
+nic_vg=$(awk "BEGIN{print(($nic_base_vg/100) * $nic_total)}")
+
+# Calculate nic. PG weight
+nic_pg=$(awk "BEGIN{print(($nic_base_pg/100) * $nic_total)}")
+
+# Calculate nic. total weight
+nic_total_weight=$(awk "BEGIN{print(($nic_vg * $vg) + ($nic_pg * $pg))}")
+
+# Format for printing the results
+colour=$(echo -e "${lc}Total Mix (ml):${e} $batch_total ${lc}ml${e} \
+\n\n${lc}Base:\nVG/PG (ml):${e} $base_total ${lc}ml${e} \
+\n${lc}VG/PG (grams):${e} $base_total_weight ${lc}g${e} \
+\n${lc}VG (grams):${e} $batch_vg ${lc}g${e} \
+\n${lc}PG (grams):${e} $batch_pg ${lc}g${e}"  &&
+echo -e "\n${lc}Nicotine:${e} $nic_total ${lc}ml${e} $nic_total_weight ${lc}g${e}" &&
+echo -e "\n${lc}Nº of flavours:${e} $flav_no \
+\n${lc}Total flavour percentage:${e}$flav_total_percentage ${lc}%${e}\n" &&
+cat $tmp | sed "s,.*\:,${so}&${se},g;s, ml,${so}&${se},g;s, g,${so}&${se},g")
+
+# Format for saving the results
+no_colour=$(echo -e "Total Mix (ml): $batch_total ml \
+\n\nBase:\nVG/PG (ml): $base_total ml \
+\nVG/PG (grams): $base_total_weight g \
+\nVG (grams): $batch_vg g \
+\nPG (grams): $batch_pg g"  &&
+echo -e "\nNicotine: $nic_total ml $nic_total_weight g" &&
+echo -e "\nFlavours: $flav_no \
+\nTotal flavour percentage:$flav_total_percentage %\n" &&
+cat $tmp)
+
+# Ask first if to save recipe, then print results
+read -p "$(echo -e "${lc}Do you want to save this recipe?${e} ${lr}(yes)y/(no)n${e}") " recipe_option
+
+# Clear screen to begin printing the results without scrolling back up
+clear
+
+if [[ "$recipe_option" == "y" ]]; then
+
+    read -p "Recipe name: " recipe_name
+
+    echo -e "#$recipe_name {" >> $recipe
+
+    echo -e "$no_colour}" >> $recipe
+
+    echo -e "$title"
+
+    echo -e "${lc}$recipe_name${e}"
+
+    echo "$colour"
+
+else
+
+    echo -e "$title"
+
+    echo -e "$colour"
+
+fi
+rm $tmp $tmp2
+}
+
+function remove_recipe () {
+
+read_recipe=$(cat $recipe)
+
+select_recipe=$(echo "$read_recipe" | grep -Po "#.*[ ^].*?" | fzf)
+
+selected_recipe=$(echo "$select_recipe" | sed 's/.$//;s/#//')
+
+read -p "$(echo -e "${lc}Do you want to delete this recipe from the database?${e} ${lr}(yes)y/(no)n${e}") " delete_option
+
+if [[ "$delete_option" == "y" ]]; then
+
+sed -i "/#$selected_recipe {/,/g}/d" $recipe
+
+echo -e "${lp}Deleted ${lc}\"$selected_recipe\"${e} ${lp}from recipes${e}"
+
+exit 1
+
+else
+
+exit 1
+
+fi
+}
+
+function print_help () {
+
+echo -e "$info"
+
+echo -e "${lp}Usage:${e} ${lc}vapecalc [option]\n
+
+Options:\n
+c    -> Calculate and/or save recipes\n
+l    -> Load recipe\n
+r    -> Remove a saved recipe\n
+h    -> Print this help message${e}\n"
+}
+
+case "$1" in
+    c) calculator
+    ;;
+    l) load_recipe
+    ;;
+    r) remove_recipe
+    ;;
+    h) print_help
+    ;;
+    *) calculator
+    ;;
+esac
