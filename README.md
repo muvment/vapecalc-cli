@@ -1,6 +1,6 @@
 # vape-calc-cli
 ## Calculate your e-juice by weight and volume
-<img src="example/example.png" align="right" width="125px"/>
+<img src="example/example.png" align="right" width="250px"/>
 
 #### *improvements aund suggestions are always welcome!*  
 Script inspired by others seen online, but namely by [EjuiceCalculator](https://github.com/lwturkjr/EjuiceCalculator) and [vaper.ninja's](https://tools.vaper.ninja/) online calculator.
