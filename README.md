@@ -1,4 +1,4 @@
-# vape-calc-cli
+# vapecalc-cli
 ## Calculate your e-juice by weight and volume
 <img src="example/example.png" align="right" width="250px"/>
 
