@@ -2,7 +2,7 @@
 ## Calculate your e-juice by weight and volume
 <img src="example/example.png" align="right" width="250px"/>
 
-#### *improvements aund suggestions are always welcome!*  
+#### *improvements and suggestions welcome*  
 Script inspired by others seen online, but namely by [EjuiceCalculator](https://github.com/lwturkjr/EjuiceCalculator) and [vaper.ninja's](https://tools.vaper.ninja/) online calculator.
 And as me and python do not work well together, I decided to make my own bash script, seeing also that nobody had yet made a proper calculator with support for weight for linux.  
 ## Installation
