@@ -138,6 +138,6 @@ r    -> Remove a saved recipe
 h    -> Print this help message
 ```
 ## Donate
-BTC: bc1q0nlxwagsx8w2ctmlqngmq4t24pfntjynafl5sx  
-LTC: ltc1q54lh7pchefwsetmcd3xs3w9tnad35z5m5j0hsm  
+BTC: bc1qn8z2jcm0nxgwsssr5leu7gs9hrltuxt94xsmj5  
+LTC: ltc1qghje97y75lr3wqc5u3qc80ag9sg04sy9453d62  
 XMR: 83DP8YWimcZBsGkgdegsvRdARa94LoYXeeBjFbbdrQNzMcBw9N7kpyZbydL9iGA9Sc8G1dx42A1bHPvQsmTo5UVj7buwVEm
