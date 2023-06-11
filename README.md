@@ -7,7 +7,7 @@ Script inspired by others seen online, but namely by [EjuiceCalculator](https://
 And as me and python do not work well together, I decided to make my own bash script, seeing also that nobody had yet made a proper calculator with support for weight for linux.  
 ## Installation
 Simply clone or download the script to the directory of your choice and make it executable.  
-The script is now also available on the aur!  
+The script is now also available in the [AUR](https://aur.archlinux.org/packages/vapecalc-cli)!  
 To install, simply ``yay -S vapecalc-cli`` (or ``paru -S`` if you use paru).  
 ## Configuration
 There are certain values that can be changed, such as default VG and PG weight values, display colors, temporary directory and saved recipes directory.  
