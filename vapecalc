@@ -5,7 +5,7 @@
 # script, also seeing nobody had made a proper calculator by weight for linux.
 
 # INFO FOR HELP MESSAGE
-lc="https://mit-license.org/"
+lc="https://www.gnu.org/licenses/gpl-3.0.en.html"
 gh="https://github.com/muvment/vape-calc-cli"
 xmr="83DP8YWimcZBsGkgdegsvRdARa94LoYXeeBjFbbdrQNzMcBw9N7kpyZbydL9iGA9Sc8G1dx42A1bHPvQsmTo5UVj7buwVEm"
 
@@ -115,7 +115,7 @@ info="
 ${r}#################################${e}
     ${lr}** E-Juice Calculator **${e}
   ${lg}Calculate by volume & weight${e}
-         ${ls}$lc\aMIT license ${le}
+         ${ls}$lc\aGPLv3 license ${le}
   ${as}$gh\aCopyright (c) 2023 muvment ${le}
          ${as}$xmr\aDonate XMR ${le}
 ${r}#################################${e}
